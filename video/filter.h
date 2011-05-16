@@ -7,7 +7,7 @@ extern "C" void initializeTexture(
 extern "C" void releaseTexture();
 
 extern "C" void poissonFilter(
-                const unsigned char *src, float *dst,
+                const unsigned char *src, const unsigned char *trimap, float *dst,
                 unsigned int w, unsigned int h);
 
 #endif // FILTER_H

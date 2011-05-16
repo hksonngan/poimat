@@ -19,7 +19,7 @@ Screen::Screen(QWidget *parent) :
     s = 1;
 
     timer = new QTimer(this);
-    timer->setInterval(50);
+    timer->setInterval(100);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTexture()));
 }
 
@@ -72,12 +72,20 @@ void Screen::runCUDA()
 
     void *buffer;
     CUDA_SAFE_CALL(cudaGLMapBufferObject(&buffer, PBO));
-    poissonFilter(image.data, (float*)buffer, image.cols, image.rows);
-    //cudaMemcpy(buffer, image.data, image.step*image.rows, cudaMemcpyHostToDevice);
+    if (trimap.data) {
+        qDebug() << "poissonFilter";
+        poissonFilter(image.data, trimap.data, (float*)buffer, image.cols, image.rows);
+    } else {
+        cudaMemcpy(buffer, image.data, image.step*image.rows, cudaMemcpyHostToDevice);
+    }
     CUDA_SAFE_CALL(cudaGLUnmapBufferObject(PBO));
 
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, PBO);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_RGBA, GL_FLOAT, 0);
+    if (trimap.data) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_RGBA, GL_FLOAT, 0);
+    } else {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    }
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 }
 
@@ -142,6 +150,12 @@ void Screen::updateTexture()
     }
 }
 
+void Screen::openTrimap(QString path)
+{
+    trimap = imread(path.toStdString(), 0);
+    updateTexture();
+}
+
 void Screen::openVideo(QString path)
 {
     releaseTexture();
@@ -181,6 +195,9 @@ void Screen::captureCamera()
 
 void Screen::release()
 {
+    if (trimap.data) {
+        trimap.release();
+    }
     if (video.isOpened()) {
         video.release();
     }

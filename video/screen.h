@@ -15,6 +15,7 @@ class Screen : public QGLWidget
     Q_OBJECT
 public:
     explicit Screen(QWidget *parent = 0);
+    void openTrimap(QString path);
     void openVideo(QString path);
     void openPhoto(QString path);
     void captureCamera();
@@ -43,6 +44,7 @@ private:
     GLfloat x,y,s;
     // OpenCV
     Mat frame;
+    Mat trimap;
     VideoCapture video;
     double last_time;
     double video_time;

@@ -36,11 +36,11 @@ CUDA_SOURCES = filter.cu
 win32 {
   INCLUDEPATH += $(CUDA_INC_PATH) $(CUTIL_INC_PATH)
   QMAKE_LIBDIR += $(CUDA_LIB_PATH) $(CUTIL_LIB_PATH)
-  LIBS += cudart.lib cutil32D.lib glew32.lib
+  LIBS += cudart.lib cutil32D.lib glew32.lib cufft.lib
   QMAKE_LFLAGS += /NODEFAULTLIB:libcmt
 
   cuda.output = $$OBJECTS_DIR${QMAKE_FILE_BASE}_cuda.obj
-  cuda.commands = $(CUDA_BIN_PATH)/nvcc.exe \
+  cuda.commands = nvcc.exe \
     --machine 32 -ccbin \"$(VCINSTALLDIR)/bin\" -maxrregcount=16 --ptxas-options=-v --compile \
     -Xcompiler \"/EHsc /W3 /nologo /O2 /Zi /MT\" $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
 }

@@ -14,8 +14,12 @@ Screen::Screen(QWidget *parent) :
 {
     PBO = 0;
 
+    x = 0;
+    y = 0;
+    s = 1;
+
     timer = new QTimer(this);
-    timer->setInterval(30);
+    timer->setInterval(50);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTexture()));
 }
 
@@ -52,10 +56,10 @@ void Screen::paintGL()
     GLfloat w = r > 1.0f ? 1.0f/r : 1.0f;
 
     glBegin(GL_TRIANGLE_FAN);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(-w,  h);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f( w,  h);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f( w, -h);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(-w, -h);
+        glTexCoord2f(0.0f, 0.0f); glVertex2f(x-s*w, y+s*h);
+        glTexCoord2f(1.0f, 0.0f); glVertex2f(x+s*w, y+s*h);
+        glTexCoord2f(1.0f, 1.0f); glVertex2f(x+s*w, y-s*h);
+        glTexCoord2f(0.0f, 1.0f); glVertex2f(x-s*w, y-s*h);
     glEnd();
 
     glFlush();
@@ -68,12 +72,12 @@ void Screen::runCUDA()
 
     void *buffer;
     CUDA_SAFE_CALL(cudaGLMapBufferObject(&buffer, PBO));
-    medianFilter(image.data, (unsigned char*)buffer, image.cols, image.rows, 10);
+    poissonFilter(image.data, (float*)buffer, image.cols, image.rows);
     //cudaMemcpy(buffer, image.data, image.step*image.rows, cudaMemcpyHostToDevice);
     CUDA_SAFE_CALL(cudaGLUnmapBufferObject(PBO));
 
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, PBO);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_RGBA, GL_FLOAT, 0);
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 }
 
@@ -99,7 +103,7 @@ void Screen::stop()
 
 void Screen::createTexture()
 {
-    GLsizei size = frame.cols*frame.rows*4;
+    GLsizei size = frame.cols*frame.rows*4*sizeof(float);
 
     glGenBuffersARB(1, &PBO);
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, PBO);
@@ -107,6 +111,8 @@ void Screen::createTexture()
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
 
     CUDA_SAFE_CALL(cudaGLRegisterBufferObject(PBO));
+
+    initializeTexture(frame.cols, frame.rows);
 
     video_time = 0;
 

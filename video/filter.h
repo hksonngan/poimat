@@ -1,9 +1,13 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-extern "C" void medianFilter(
-                const unsigned char *src, unsigned char *dst,
-                unsigned int w, unsigned int h,
-                unsigned int r);
+extern "C" void initializeTexture(
+                unsigned int w, unsigned int h);
+
+extern "C" void releaseTexture();
+
+extern "C" void poissonFilter(
+                const unsigned char *src, float *dst,
+                unsigned int w, unsigned int h);
 
 #endif // FILTER_H

@@ -38,7 +38,9 @@ protected:
     void runCUDA();
 
 private:
+    // display
     QTimer *timer;
+    GLfloat x,y,s;
     // OpenCV
     Mat frame;
     VideoCapture video;

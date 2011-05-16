@@ -27,7 +27,7 @@ Gui::Gui(QWidget *parent) :
     connect(ui->actionVideo, SIGNAL(triggered()), this, SLOT(openVideo()));
     connect(ui->actionPhoto, SIGNAL(triggered()), this, SLOT(openPhoto()));
     connect(ui->actionCamera, SIGNAL(triggered()), this, SLOT(captureCamera()));
-    connect(ui->actionMat, SIGNAL(toggled(bool)), this, SLOT(mattingMode(bool)));
+    connect(ui->actionMat, SIGNAL(triggered()), this, SLOT(matting()));
     connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(play()));
     connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(pause()));
 }
@@ -81,8 +81,21 @@ void Gui::captureCamera()
     screen->captureCamera();
 }
 
-void Gui::mattingMode(bool matting)
+void Gui::matting()
 {
+    QString path = QFileDialog::getOpenFileName(
+        this, QString::null,  QString::null,
+        "Photos (*.bmp *.dib *.jpeg *.jpg *.jpe *.jp2 *.png *.pbm, *.pgm *.ppm *.sr *.ras *.tiff *.tif)"
+        );
+
+    if (path == QString::null) {
+        qDebug() << "path == QString::null";
+        return;
+    }
+
+    qDebug() << path;
+
+    screen->openTrimap(path);
 }
 
 void Gui::play()

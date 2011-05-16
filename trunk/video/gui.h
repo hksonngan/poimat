@@ -22,7 +22,7 @@ private slots:
     void openVideo();
     void openPhoto();
     void captureCamera();
-    void mattingMode(bool);
+    void matting();
     void play();
     void pause();
 

@@ -5,6 +5,7 @@
 #include <cutil_gl_error.h>
 #include <cuda_gl_interop.h>
 
+#include <QMessageBox>
 #include <QDateTime>
 #include <QTimer>
 #include <QDebug>
@@ -17,9 +18,10 @@ Screen::Screen(QWidget *parent) :
     x = 0;
     y = 0;
     s = 1;
+    mode = NONE;
 
     timer = new QTimer(this);
-    timer->setInterval(100);
+    timer->setInterval(50);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateTexture()));
 }
 
@@ -73,7 +75,6 @@ void Screen::runCUDA()
     void *buffer;
     CUDA_SAFE_CALL(cudaGLMapBufferObject(&buffer, PBO));
     if (trimap.data) {
-        qDebug() << "poissonFilter";
         poissonFilter(image.data, trimap.data, (float*)buffer, image.cols, image.rows);
     } else {
         cudaMemcpy(buffer, image.data, image.step*image.rows, cudaMemcpyHostToDevice);
@@ -96,7 +97,7 @@ void Screen::paintEvent(QPaintEvent *)
 
 void Screen::start()
 {
-    if (video.isOpened()) {
+    if (mode == VIDEO || mode == CAMERA) {
         last_time = QDateTime::currentMSecsSinceEpoch();
         timer->start();
     }
@@ -104,7 +105,7 @@ void Screen::start()
 
 void Screen::stop()
 {
-    if (video.isOpened()) {
+    if (mode == VIDEO || mode == CAMERA) {
         timer->stop();
     }
 }
@@ -140,13 +141,16 @@ void Screen::updateTexture()
 {
     runCUDA();
     updateGL();
-    if (video.isOpened()) {
+    if (mode == VIDEO) {
         double current_time = QDateTime::currentMSecsSinceEpoch();
         video_time += current_time-last_time;
         last_time = current_time;
         while (video_time > video.get(CV_CAP_PROP_POS_MSEC)) {
             video >> frame;
         }
+    }
+    if (mode == CAMERA) {
+        video >> frame;
     }
 }
 
@@ -156,27 +160,39 @@ void Screen::openTrimap(QString path)
     updateTexture();
 }
 
+void Screen::openPhoto(QString path)
+{
+    releaseTexture();
+    release();
+    frame = imread(path.toStdString());
+    if (!frame.data) {
+        QMessageBox msgbox(this);
+        msgbox.setIcon(QMessageBox::Warning);
+        msgbox.setText("Can't open the image file.");
+        msgbox.exec();
+        return;
+    }
+    mode = PHOTO;
+    createTexture();
+    updateTexture();
+}
+
 void Screen::openVideo(QString path)
 {
     releaseTexture();
     release();
     video.open(path.toStdString());
     if (!video.isOpened()) {
-        qDebug() << "!video.isOpened()";
+        QMessageBox msgbox(this);
+        msgbox.setIcon(QMessageBox::Warning);
+        msgbox.setText("Can't open the video file.");
+        msgbox.exec();
         return;
     }
+    mode = VIDEO;
     video >> frame;
     createTexture();
     start();
-}
-
-void Screen::openPhoto(QString path)
-{
-    releaseTexture();
-    release();
-    frame = imread(path.toStdString());
-    createTexture();
-    updateTexture();
 }
 
 void Screen::captureCamera()
@@ -185,9 +201,13 @@ void Screen::captureCamera()
     release();
     video.open(0);
     if (!video.isOpened()) {
-        qDebug() << "!video.isOpened()";
+        QMessageBox msgbox(this);
+        msgbox.setIcon(QMessageBox::Warning);
+        msgbox.setText("Can't open the camera.");
+        msgbox.exec();
         return;
     }
+    mode = CAMERA;
     video >> frame;
     createTexture();
     start();
@@ -198,8 +218,12 @@ void Screen::release()
     if (trimap.data) {
         trimap.release();
     }
+    if (frame.data) {
+        frame.release();
+    }
     if (video.isOpened()) {
         video.release();
+        stop();
     }
-    stop();
+    mode = NONE;
 }

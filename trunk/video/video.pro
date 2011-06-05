@@ -31,7 +31,9 @@ RESOURCES += \
 #   CUDA
 #-------------------------------------------------
 
-CUDA_SOURCES = filter.cu
+CUDA_SOURCES = \
+    poisson.cu\
+    filter.cu
 
 win32 {
   INCLUDEPATH += $(CUDA_INC_PATH) $(CUTIL_INC_PATH)

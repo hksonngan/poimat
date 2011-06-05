@@ -50,7 +50,6 @@ void Gui::openVideo()
         "Vedios (*.avi *.mpg *.mp4)");
 
     if (path == QString::null) {
-        qDebug() << "path == QString::null";
         return;
     }
 
@@ -67,7 +66,6 @@ void Gui::openPhoto()
         );
 
     if (path == QString::null) {
-        qDebug() << "path == QString::null";
         return;
     }
 
@@ -89,7 +87,6 @@ void Gui::matting()
         );
 
     if (path == QString::null) {
-        qDebug() << "path == QString::null";
         return;
     }
 

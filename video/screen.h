@@ -10,6 +10,13 @@ using namespace cv;
 
 class Timer;
 
+enum Mode {
+    NONE,
+    PHOTO,
+    VIDEO,
+    CAMERA,
+};
+
 class Screen : public QGLWidget
 {
     Q_OBJECT
@@ -42,6 +49,7 @@ private:
     // display
     QTimer *timer;
     GLfloat x,y,s;
+    Mode mode;
     // OpenCV
     Mat frame;
     Mat trimap;

@@ -21,8 +21,9 @@ private slots:
     void exit();
     void openVideo();
     void openPhoto();
-    void captureCamera();
-    void matting();
+    void openCamera();
+    void matte();
+    void background();
     void play();
     void pause();
 

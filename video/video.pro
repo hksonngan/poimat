@@ -18,8 +18,10 @@ SOURCES += \
 HEADERS += \
     gui.h \
     screen.h \
-    filter.h \
-    filter.h
+    cuda/kernel.h \
+    cuda/flood.h \
+    cuda/filter.h \
+    cuda/alpha.h
 
 FORMS += \
     gui.ui
@@ -32,8 +34,9 @@ RESOURCES += \
 #-------------------------------------------------
 
 CUDA_SOURCES = \
-    poisson.cu\
-    filter.cu
+    cuda/alpha.cu\
+    cuda/flood.cu\
+    cuda/filter.cu
 
 win32 {
   INCLUDEPATH += $(CUDA_INC_PATH) $(CUTIL_INC_PATH)

@@ -155,7 +155,7 @@ void alphaRefinement(float *data, int w, int h)
 {
     kernel {
         float alpha = data[y*w+x];
-        alpha = (alpha-0.05f)/0.95f;
+        alpha = (alpha-0.02f)/0.98f;
         alpha = min(max(alpha, 0.0f), 1.0f);
         data[y*w+x] = alpha;
     }
@@ -309,7 +309,7 @@ poissonFilter(
     alphaGradient <<< grid, threads, 0, 0 >>> (alpha, w, h);
     cudaMemcpyToArrayAsync(cuArray[4], 0, 0, alpha, w*h*sizeof(float), cudaMemcpyDeviceToDevice, 0);
     alphaInitialize <<< grid, threads, 0, 0 >>> (alpha, w, h);
-    for (int i=0; i<32; i++){
+    for (int i=0; i<64; i++){
         // texture 5: alpha
         cudaMemcpyToArrayAsync(cuArray[5], 0, 0, alpha, w*h*sizeof(float), cudaMemcpyDeviceToDevice, 0);
         alphaReconstruct <<< grid, threads, 0, 0 >>> (alpha, w, h);

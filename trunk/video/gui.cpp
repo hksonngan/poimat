@@ -23,13 +23,14 @@ Gui::Gui(QWidget *parent) :
     screen = new Screen(ui->centralWidget);
     ui->gridLayout->addWidget(screen, 0, 0, 1, 1);
 
-    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(exit()));
-    connect(ui->actionVideo, SIGNAL(triggered()), this, SLOT(openVideo()));
-    connect(ui->actionPhoto, SIGNAL(triggered()), this, SLOT(openPhoto()));
-    connect(ui->actionCamera, SIGNAL(triggered()), this, SLOT(captureCamera()));
-    connect(ui->actionMat, SIGNAL(triggered()), this, SLOT(matting()));
-    connect(ui->actionPlay, SIGNAL(triggered()), this, SLOT(play()));
-    connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(pause()));
+    connect(ui->actionExit,       SIGNAL(triggered()), this, SLOT(exit()));
+    connect(ui->actionVideo,      SIGNAL(triggered()), this, SLOT(openVideo()));
+    connect(ui->actionPhoto,      SIGNAL(triggered()), this, SLOT(openPhoto()));
+    connect(ui->actionCamera,     SIGNAL(triggered()), this, SLOT(openCamera()));
+    connect(ui->actionMatte,      SIGNAL(triggered()), this, SLOT(matte()));
+    connect(ui->actionBackground, SIGNAL(triggered()), this, SLOT(background()));
+    connect(ui->actionPlay,       SIGNAL(triggered()), this, SLOT(play()));
+    connect(ui->actionPause,      SIGNAL(triggered()), this, SLOT(pause()));
 }
 
 Gui::~Gui()
@@ -74,12 +75,12 @@ void Gui::openPhoto()
     screen->openPhoto(path);
 }
 
-void Gui::captureCamera()
+void Gui::openCamera()
 {
-    screen->captureCamera();
+    screen->openCamera();
 }
 
-void Gui::matting()
+void Gui::matte()
 {
     QString path = QFileDialog::getOpenFileName(
         this, QString::null,  QString::null,
@@ -93,6 +94,22 @@ void Gui::matting()
     qDebug() << path;
 
     screen->openTrimap(path);
+}
+
+void Gui::background()
+{
+    QString path = QFileDialog::getOpenFileName(
+        this, QString::null,  QString::null,
+        "Photos (*.bmp *.dib *.jpeg *.jpg *.jpe *.jp2 *.png *.pbm, *.pgm *.ppm *.sr *.ras *.tiff *.tif)"
+        );
+
+    if (path == QString::null) {
+        return;
+    }
+
+    qDebug() << path;
+
+    screen->openBackground(path);
 }
 
 void Gui::play()

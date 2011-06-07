@@ -72,7 +72,9 @@
    <addaction name="actionPhoto"/>
    <addaction name="actionCamera"/>
    <addaction name="separator"/>
-   <addaction name="actionMat"/>
+   <addaction name="actionMatte"/>
+   <addaction name="separator"/>
+   <addaction name="actionBackground"/>
    <addaction name="separator"/>
    <addaction name="actionPlay"/>
    <addaction name="actionPause"/>
@@ -130,13 +132,16 @@
     <string>Photo</string>
    </property>
   </action>
-  <action name="actionMat">
+  <action name="actionMatte">
    <property name="icon">
     <iconset resource="resource.qrc">
      <normaloff>:/icons/icons/183-genie-lamp.png</normaloff>:/icons/icons/183-genie-lamp.png</iconset>
    </property>
    <property name="text">
-    <string>Mat</string>
+    <string>Matte</string>
+   </property>
+   <property name="toolTip">
+    <string>Matte</string>
    </property>
   </action>
   <action name="actionCamera">
@@ -146,6 +151,18 @@
    </property>
    <property name="text">
     <string>Camera</string>
+   </property>
+  </action>
+  <action name="actionBackground">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/icons/icons/103-map.png</normaloff>:/icons/icons/103-map.png</iconset>
+   </property>
+   <property name="text">
+    <string>Background</string>
+   </property>
+   <property name="toolTip">
+    <string>Background</string>
    </property>
   </action>
  </widget>

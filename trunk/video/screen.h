@@ -23,24 +23,25 @@ class Screen : public QGLWidget
 public:
     explicit Screen(QWidget *parent = 0);
     void openTrimap(QString path);
+    void openBackground(QString path);
     void openVideo(QString path);
     void openPhoto(QString path);
-    void captureCamera();
+    void openCamera();
     void release();
     void start();
     void stop();
 
 private slots:
-    void paintEvent(QPaintEvent *);
-    void updateTexture();
+    void updateFrame();
 
 protected:
     // opengl
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
-    // texture: opengl & cuda
-    void createTexture();
+    // opengl
+    void createTexture(int width, int height);
+    void updateTexture(int index);
     void releaseTexture();
     // cuda
     void runCUDA();
@@ -53,11 +54,13 @@ private:
     // OpenCV
     Mat frame;
     Mat trimap;
+    Mat background;
     VideoCapture video;
     double last_time;
     double video_time;
     // OpenGL
-    GLuint PBO;
+    GLuint  PBO;
+    GLuint  textures[2];
     GLfloat ratio;
 };
 

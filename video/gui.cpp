@@ -54,7 +54,7 @@ void Gui::openVideo()
         return;
     }
 
-    qDebug() << path;
+    qDebug() << "Video:" << path;
 
     screen->openVideo(path);
 }
@@ -70,7 +70,7 @@ void Gui::openPhoto()
         return;
     }
 
-    qDebug() << path;
+    qDebug() << "Photo:" << path;
 
     screen->openPhoto(path);
 }
@@ -78,6 +78,7 @@ void Gui::openPhoto()
 void Gui::openCamera()
 {
     screen->openCamera();
+    qDebug() << "Camera: #0";
 }
 
 void Gui::matte()
@@ -91,7 +92,7 @@ void Gui::matte()
         return;
     }
 
-    qDebug() << path;
+    qDebug() << "Trimap:" << path;
 
     screen->openTrimap(path);
 }
@@ -107,7 +108,7 @@ void Gui::background()
         return;
     }
 
-    qDebug() << path;
+    qDebug() << "Background:" << path;
 
     screen->openBackground(path);
 }

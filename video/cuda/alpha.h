@@ -7,7 +7,7 @@ void bindAlphaTexture(cudaArray* arrImage, cudaArray* arrTrimap,
 void unbindAlphaTexture();
 
 __global__ void alphaFromTrimap(float *data, int w, int h);
-__global__ void alphaGradient(float *data, int w, int h);
+__global__ void alphaLaplacian(float *data, int w, int h);
 __global__ void alphaInitialize(float *data, int w, int h);
 __global__ void alphaReconstruct(float *data, int w, int h);
 __global__ void alphaRefinement(float *data, int w, int h);

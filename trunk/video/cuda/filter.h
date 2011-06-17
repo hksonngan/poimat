@@ -1,13 +1,12 @@
 #ifndef FILTER_H
 #define FILTER_H
 
-extern "C" void initializeTexture(
-                unsigned int w, unsigned int h);
+void initializeFilter(unsigned int w, unsigned int h);
 
-extern "C" void releaseTexture();
+void releaseFilter();
 
-extern "C" void poissonFilter(
-                const unsigned char *src, const unsigned char *trimap, float *dst,
-                unsigned int w, unsigned int h);
+void poissonFilter(const unsigned char *src, const unsigned char *trimap, float *dst);
+
+void trimapFilter(const unsigned char *src, unsigned char *trimap, int* f_point, int f_count, int* b_point, int b_count);
 
 #endif // FILTER_H

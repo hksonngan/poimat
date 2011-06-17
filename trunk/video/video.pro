@@ -21,7 +21,9 @@ HEADERS += \
     cuda/kernel.h \
     cuda/flood.h \
     cuda/filter.h \
-    cuda/alpha.h
+    cuda/alpha.h \
+    cuda/smooth.h\
+    cuda/bilayer.h
 
 FORMS += \
     gui.ui
@@ -34,9 +36,11 @@ RESOURCES += \
 #-------------------------------------------------
 
 CUDA_SOURCES = \
-    cuda/alpha.cu\
-    cuda/flood.cu\
-    cuda/filter.cu
+    cuda/alpha.cu \
+    cuda/flood.cu \
+    cuda/smooth.cu \
+    cuda/filter.cu \
+    cuda/bilayer.cu
 
 win32 {
   INCLUDEPATH += $(CUDA_INC_PATH) $(CUTIL_INC_PATH)
@@ -45,8 +49,8 @@ win32 {
   QMAKE_LFLAGS += /NODEFAULTLIB:libcmt
 
   cuda.output = $$OBJECTS_DIR${QMAKE_FILE_BASE}_cuda.obj
-  cuda.commands = nvcc.exe \
-    --machine 32 -ccbin \"$(VCINSTALLDIR)/bin\" -maxrregcount=16 --ptxas-options=-v --compile \
+  cuda.commands = nvcc.exe -arch sm_20 \
+    --machine 32 -ccbin \"$(VCINSTALLDIR)/bin\" -maxrregcount=32 --ptxas-options=-v --compile \
     -Xcompiler \"/EHsc /W3 /nologo /O2 /Zi /MT\" $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} -o ${QMAKE_FILE_OUT}
 }
 unix {
